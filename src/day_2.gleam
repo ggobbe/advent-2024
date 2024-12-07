@@ -3,9 +3,11 @@ import gleam/list
 import gleam/result
 import gleam/string
 
-pub fn count_safe_reports(input: String) {
-  let reports = parse_reports(input)
+pub fn part_1(input: String) {
+  parse_reports(input) |> count_safe_reports()
+}
 
+pub fn count_safe_reports(reports: List(List(Int))) -> Int {
   reports
   |> list.filter(is_ordered)
   |> list.filter(adjacents_by(_, 1, 3))
