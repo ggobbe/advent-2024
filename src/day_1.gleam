@@ -1,6 +1,8 @@
 import advent_input
+import gleam/dict
 import gleam/int
 import gleam/list
+import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 
@@ -17,6 +19,33 @@ pub fn get_total_distance(left: List(Int), right: List(Int)) -> Int {
   |> list.map(fn(pair) {
     let #(a, b) = pair
     int.absolute_value(a - b)
+  })
+  |> int.sum()
+}
+
+pub fn part2() {
+  let #(left, right) = parse_file()
+  similarity_score(left, right)
+}
+
+pub fn similarity_score(left: List(Int), right: List(Int)) -> Int {
+  let right_occurences =
+    list.fold(right, dict.new(), fn(acc, x) {
+      dict.upsert(acc, x, fn(x) {
+        case x {
+          Some(i) -> i + 1
+          None -> 1
+        }
+      })
+    })
+
+  left
+  |> list.map(fn(x) {
+    let multiplier = case dict.get(right_occurences, x) {
+      Ok(i) -> i
+      Error(Nil) -> 0
+    }
+    x * multiplier
   })
   |> int.sum()
 }
